@@ -1,0 +1,23 @@
+{
+  "name": "no",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node ./src/index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "chrome-paths": "^1.0.1",
+    "colors": "^1.4.0",
+    "discord-webhook-node": "^1.1.8",
+    "fs": "^0.0.1-security",
+    "pkg": "^5.5.2",
+    "prompts": "^2.4.2",
+    "puppeteer-extra": "^3.2.3",
+    "puppeteer-extra-plugin-stealth": "^2.9.0",
+    "readline-sync": "^1.4.10"
+  }
+}
