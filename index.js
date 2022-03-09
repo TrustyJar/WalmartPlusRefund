@@ -47,24 +47,25 @@ const good1 = ["Is everything all good?", "Just confirming, refund will come soo
 const good = good1[Math.floor(Math.random() * good1.length)]
 const perfect1 = ["Perfect! Have a great rest of your day.", "Thanks so much, really apprecaite", "Thank you!", "Thanks", "Okay, perfect"]
 const perfect = perfect1[Math.floor(Math.random() * perfect1.length)]
+  
+async function givePage(){
+  const browser = await puppeteer.launch({headless: false, executablePath: chromePaths.chrome, args: ['--proxy-server=' + proxyconfig], args: ['--disable-infobars'],  args: [`--window-size=500,900`], defaultViewport: null});
+  const page = await browser.newPage();
+  return {page, browser};
+}
+
 
 for (let i = 0; i < accounts.length ; i++){
-  
-    async function givePage(){
-        const browser = await puppeteer.launch({headless: false, executablePath: chromePaths.chrome, args: ['--proxy-server=' + proxyconfig], args: [`--window-size=500,900`], defaultViewport: null});
-        const page = await browser.newPage();
-        return {page, browser};
-      }
-
-
 
 async function go(page){
     await page.goto(savannah_url);
     console.log('Parsing Login'.yellow)
     await page.waitForTimeout(10);
-    await page.type("input[id='email']", accounts[i],  {delay: 100});
+    await page.type("input[id='email-split-screen']", accounts[i],  {delay: 100});
+    await page.click("button[type='submit']",  elem => elem.click());  
     await page.waitForTimeout(10);
-    await page.type("input[id='password']", passwords[i], {delay: 100});
+    await page.waitForSelector("input[id='sign-in-password-change']");
+    await page.type("input[id='sign-in-password-change']", passwords[i], {delay: 100});
     await page.waitForTimeout(10);
     await page.click("button[type='submit']",  elem => elem.click());  
     if (await page.$("div[id='px-captcha']") !== null){
@@ -111,7 +112,7 @@ async function go(page){
       await page.waitForTimeout(300);
       await page.click("button[class='wc-send']", elem => elem.click());   
       await page.waitForTimeout(1000);
-      await page.type("textarea[aria-label='Type a message']", 'My email is' + ' ' +  accounts[i] + ', my billing address is' + ' ' + billing[i] + ', and the last for digits of my card are' + ' ' + card[i] + '. I sent the details above' ,  {delay: 50});   
+      await page.type("textarea[aria-label='Type a message']", 'My email is' + ' ' +  accounts[i] + ', all of my other info is in my settings. Thanks ( :' ,  {delay: 50});   
       await page.waitForTimeout(300);
       await page.click("button[class='wc-send']", elem => elem.click());   
     }
@@ -123,6 +124,7 @@ async function go(page){
   await page.waitForTimeout(300);
   await page.click("button[class='wc-send']", elem => elem.click());   
   await page.waitForTimeout(300000);
+  console.log('Manual assistance may be needed here'.cyan)
   await page.click("textarea[aria-label='Type a message']", elem => elem.click());   
   await page.type("textarea[aria-label='Type a message']", good ,  {delay: 100});   
   await page.waitForTimeout(300);
@@ -195,7 +197,7 @@ async function walmartone(){
   for (let i = 0; i < accounts.length ; i++){
     
       async function givePage(){
-          const browser = await puppeteer.launch({headless: false, executablePath: chromePaths.chrome, args: ['--proxy-server=' + proxyconfig], args: [`--window-size=500,900`], defaultViewport: null});
+          const browser = await puppeteer.launch({headless: false, executablePath: chromePaths.chrome, args: ['--proxy-server=' + proxyconfig], ignoreDefaultArgs: ["--enable-automation"], args: [`--window-size=500,900`], defaultViewport: null});
           const page = await browser.newPage();
           return {page, browser};
         }
@@ -203,14 +205,20 @@ async function walmartone(){
   
   
   async function go(page){
-      await page.goto(savannah_url);
-      console.log('Parsing Login'.yellow)
-      await page.waitForTimeout(10);
-      await page.type("input[id='email']", accounts[i],  {delay: 100});
-      await page.waitForTimeout(10);
-      await page.type("input[id='password']", passwords[i], {delay: 100});
-      await page.waitForTimeout(10);
-      await page.click("button[type='submit']",  elem => elem.click());  
+    await page.goto(savannah_url);
+    console.log('Parsing Login'.yellow)
+    await page.waitForTimeout(10);
+    await page.type("input[id='email-split-screen']", accounts[i],  {delay: 100});
+    await page.click("button[type='submit']",  elem => elem.click());  
+    await page.waitForTimeout(1000);
+    if (await page.$("div[id='px-captcha']") !== null){
+      console.log('Manual PX Solve Needed!'.red);
+      await page.waitForTimeout(60000);
+    }
+    await page.waitForTimeout(10);
+    await page.type("input[id='sign-in-password-change']", passwords[i], {delay: 100});
+    await page.waitForTimeout(10);
+    await page.click("button[type='submit']",  elem => elem.click()); 
       if (await page.$("div[id='px-captcha']") !== null){
           console.log('PerimiterX Ban'.red);
          }
